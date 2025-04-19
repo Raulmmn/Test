@@ -70,11 +70,19 @@ local function _0x5edb02()
     end
 end
 
+-- Função para enviar mensagem com atraso
+local function _0x7bbfbd(msg)
+    wait(0.01) -- Atraso de 10 milissegundos
+    game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg, "All")
+end
+
 _0x5f255d.MouseButton1Click:Connect(function()
+    _0x7bbfbd("Molestando " .. _0x5933fe.Text)
     _0x39f0c2(_0x5933fe.Text)
 end)
 
 _0x2ac28d.MouseButton1Click:Connect(function()
+    _0x7bbfbd("Molestando todos")
     _0x5edb02()
 end)
 
