@@ -1,0 +1,142 @@
+-- Variáveis de controle
+local distancia = 2
+local rodando = false
+local rodandoGeral = false
+local posInicial = nil
+local targetName = ""
+local paradaForcada = false
+
+-- Serviços
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+-- GUI
+local gui = Instance.new("ScreenGui", game.CoreGui)
+local toggleBtn = Instance.new("TextButton", gui)
+toggleBtn.Text = "Hacks"
+toggleBtn.Size = UDim2.new(0, 100, 0, 30)
+toggleBtn.Position = UDim2.new(0, 10, 0, 50)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 220, 0, 180)
+frame.Position = UDim2.new(0, 20, 0, 90)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.Visible = true
+
+toggleBtn.MouseButton1Click:Connect(function()
+	frame.Visible = not frame.Visible
+end)
+
+local targetBox = Instance.new("TextBox", frame)
+targetBox.PlaceholderText = "Nome do Alvo"
+targetBox.Size = UDim2.new(1, -20, 0, 30)
+targetBox.Position = UDim2.new(0, 10, 0, 10)
+targetBox.Text = ""
+
+local btnAlvo = Instance.new("TextButton", frame)
+btnAlvo.Text = "Molestar Alvo"
+btnAlvo.Size = UDim2.new(1, -20, 0, 30)
+btnAlvo.Position = UDim2.new(0, 10, 0, 50)
+btnAlvo.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+
+local btnGeral = Instance.new("TextButton", frame)
+btnGeral.Text = "Molestar Geral"
+btnGeral.Size = UDim2.new(1, -20, 0, 30)
+btnGeral.Position = UDim2.new(0, 10, 0, 90)
+btnGeral.BackgroundColor3 = Color3.fromRGB(255, 150, 0)
+
+local btnParar = Instance.new("TextButton", frame)
+btnParar.Text = "Parar Tudo"
+btnParar.Size = UDim2.new(1, -20, 0, 30)
+btnParar.Position = UDim2.new(0, 10, 0, 130)
+btnParar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+
+-- Função de sarrada
+local function sarrarAlvo(nomeAlvo)
+	local alvo = Players:FindFirstChild(nomeAlvo)
+	if not alvo or not alvo.Character or not alvo.Character:FindFirstChild("HumanoidRootPart") then
+		warn("Alvo inválido.")
+		return
+	end
+
+	local char = LocalPlayer.Character
+	if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+	local hrp = char.HumanoidRootPart
+	posInicial = hrp.Position
+	rodando = true
+
+	-- Loop da sarrada
+	spawn(function()
+		while rodando and not paradaForcada and alvo and alvo.Character and alvo.Character:FindFirstChild("HumanoidRootPart") do
+			local targetHRP = alvo.Character.HumanoidRootPart
+			local pos = targetHRP.Position + Vector3.new(0, 2, 0) - targetHRP.CFrame.LookVector * distancia
+			hrp.CFrame = CFrame.new(pos, targetHRP.Position)
+			wait(0.05)
+		end
+	end)
+
+	-- Chat spam
+	spawn(function()
+		local msgs = {
+			"PEGANDO: " .. nomeAlvo,
+			"AI DENTRO",
+			"VOCÊ FOI SAR-RADO",
+		}
+		while rodando and not paradaForcada do
+			game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(
+				msgs[math.random(1, #msgs)], "All")
+			wait(0.5)
+		end
+	end)
+end
+
+-- Função geral
+local function molestarTodos()
+	if rodandoGeral then return end
+	rodandoGeral = true
+	spawn(function()
+		while rodandoGeral and not paradaForcada do
+			for _, p in pairs(Players:GetPlayers()) do
+				if paradaForcada then break end
+				if p ~= LocalPlayer then
+					targetName = p.Name
+					rodando = true
+					sarrarAlvo(targetName)
+					wait(1.5)
+					rodando = false
+					wait(0.2)
+				end
+			end
+		end
+	end)
+end
+
+-- Botões
+btnAlvo.MouseButton1Click:Connect(function()
+	paradaForcada = false
+	rodando = false
+	wait(0.1)
+	targetName = targetBox.Text
+	sarrarAlvo(targetName)
+end)
+
+btnGeral.MouseButton1Click:Connect(function()
+	paradaForcada = false
+	rodandoGeral = false
+	wait(0.1)
+	molestarTodos()
+end)
+
+btnParar.MouseButton1Click:Connect(function()
+	paradaForcada = true
+	rodando = false
+	rodandoGeral = false
+	wait(0.2)
+	local char = LocalPlayer.Character
+	if char and char:FindFirstChild("HumanoidRootPart") and posInicial then
+		char.HumanoidRootPart.CFrame = CFrame.new(posInicial)
+	end
+end)
