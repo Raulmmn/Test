@@ -1,0 +1,86 @@
+local _0x4a3f0c = game:GetService("Players")
+local _0x2a7a7f = game:GetService("RunService")
+local _0x3b8b1b = _0x4a3f0c.LocalPlayer
+local _0x5bdf76 = Instance.new("ScreenGui", game.CoreGui)
+local _0x120f2d = Instance.new("TextButton", _0x5bdf76)
+_0x120f2d.Text = "Hacks"
+_0x120f2d.Size = UDim2.new(0, 100, 0, 30)
+_0x120f2d.Position = UDim2.new(0, 10, 0, 50)
+_0x120f2d.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+_0x120f2d.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local _0x285a88 = Instance.new("Frame", _0x5bdf76)
+_0x285a88.Size = UDim2.new(0, 220, 0, 180)
+_0x285a88.Position = UDim2.new(0, 20, 0, 90)
+_0x285a88.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+_0x285a88.Visible = true
+
+_0x120f2d.MouseButton1Click:Connect(function()
+    _0x285a88.Visible = not _0x285a88.Visible
+end)
+
+local _0x5933fe = Instance.new("TextBox", _0x285a88)
+_0x5933fe.PlaceholderText = "Nome do Alvo"
+_0x5933fe.Size = UDim2.new(1, -20, 0, 30)
+_0x5933fe.Position = UDim2.new(0, 10, 0, 10)
+_0x5933fe.Text = ""
+
+local _0x5f255d = Instance.new("TextButton", _0x285a88)
+_0x5f255d.Text = "Molestar Alvo"
+_0x5f255d.Size = UDim2.new(1, -20, 0, 30)
+_0x5f255d.Position = UDim2.new(0, 10, 0, 50)
+_0x5f255d.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+
+local _0x2ac28d = Instance.new("TextButton", _0x285a88)
+_0x2ac28d.Text = "Molestar Geral"
+_0x2ac28d.Size = UDim2.new(1, -20, 0, 30)
+_0x2ac28d.Position = UDim2.new(0, 10, 0, 90)
+_0x2ac28d.BackgroundColor3 = Color3.fromRGB(255, 150, 0)
+
+local _0x253a22 = Instance.new("TextButton", _0x285a88)
+_0x253a22.Text = "Parar Tudo"
+_0x253a22.Size = UDim2.new(1, -20, 0, 30)
+_0x253a22.Position = UDim2.new(0, 10, 0, 130)
+_0x253a22.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+
+local function _0x39f0c2(_0x536b2d)
+    local _0x4a1990 = _0x4a3f0c:FindFirstChild(_0x536b2d)
+    if not _0x4a1990 or not _0x4a1990.Character or not _0x4a1990.Character:FindFirstChild("HumanoidRootPart") then
+        warn("Alvo inválido.")
+        return
+    end
+    local _0x5c215f = _0x3b8b1b.Character
+    if not _0x5c215f or not _0x5c215f:FindFirstChild("HumanoidRootPart") then return end
+    local _0x3d7f72 = _0x5c215f.HumanoidRootPart
+    local _0x55199d = _0x4a1990.Character.HumanoidRootPart
+    spawn(function()
+        while true do
+            _0x3d7f72.CFrame = CFrame.new(_0x55199d.Position + Vector3.new(0, 2, 0))
+            wait(0.1)
+        end
+    end)
+end
+
+local function _0x5edb02()
+    for _, _0x3f9ab1 in pairs(_0x4a3f0c:GetPlayers()) do
+        if _0x3f9ab1 ~= _0x3b8b1b then
+            _0x39f0c2(_0x3f9ab1.Name)
+            wait(1)
+        end
+    end
+end
+
+_0x5f255d.MouseButton1Click:Connect(function()
+    _0x39f0c2(_0x5933fe.Text)
+end)
+
+_0x2ac28d.MouseButton1Click:Connect(function()
+    _0x5edb02()
+end)
+
+_0x253a22.MouseButton1Click:Connect(function()
+    local _0x5b871e = _0x3b8b1b.Character
+    if _0x5b871e and _0x5b871e:FindFirstChild("HumanoidRootPart") then
+        _0x5b871e.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(0, 0, 0))
+    end
+end)
